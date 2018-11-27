@@ -130,9 +130,27 @@ function getByGroupImages (req, res) {
     deleted: 0,
     available: 0,
     filepath: 0,
-    resgisterdate: 0,
   }, { sort:{ resgisterdate: -1 } })
     .then(item => {
+      /*item = item.map(itemt => {
+
+        var stringImage = (itemt.filepath) ? base64Img.base64Sync(itemt.filepath) : null;//base64Img.base64Sync('public/image/default.png');
+        itemt = {
+          _id: itemt._id,
+          name: itemt.name,
+          description: itemt.description,
+          code: itemt.code,
+          kind: itemt.kind,
+          unit: itemt.unit,
+          // filepath: null,
+          resgisterdate: itemt.resgisterdate,
+          groupsprices: itemt.groupsprices,
+          available: itemt.available,
+          deleted: itemt.deleted,
+          image: stringImage
+        };
+        return itemt;
+      });*/
       res.send({ data: item });
     })
     .catch(error => res.status(404).send({ data: error }));
@@ -169,7 +187,7 @@ function update (req, res){
       res.send({ data: response });
     })
     .catch(error => res.status(404).send({ data: error }));
-  // var imagefile = newItem.image;
+  var imagefile = newItem.image;
   /*base64Img.img(imagefile, 'public/image/', newItem.code
     ,function(err, filepath) {
       if (err) {
