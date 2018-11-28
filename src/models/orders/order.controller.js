@@ -85,6 +85,27 @@ function getByClientId (req, res) {
     .catch(error => res.status(404).send({ data: error }));
 }
 
+function getByParameter (req, res) {
+  console.log('Invoking getByParameter[get]');
+  var deliverydate = moment(new Date(req.params.deliverydate + ' 00:00:00.000')).startOf('day');
+  let status = req.params.status;
+  return Orders.find( { deliverydate,  status }, {}, { sort:{ orderdate: -1 } })
+    .then(userList => {
+      Items.populate(userList, { path: "itemsorder.item", model: 'Item' , select: '-image'}).
+      then(listItems => {
+        Clients.populate(listItems, { path: "client" })
+          .then(listItems => {
+            Groups.populate(listItems, { path: "client.group", model: 'Group' })
+              .then(listItems => {
+                Users.populate(listItems, {path: "user"})
+                  .then(listItems => res.send({data: listItems}))
+              })
+          })
+      })
+    })
+    .catch(error => res.status(404).send({ data: error }));
+}
+
 
 function update (req, res) {
   var newOrder = req.body;
@@ -216,4 +237,4 @@ function getBasicReportTomorow (req, res) {
     .catch(error => res.status(404).send({ data: error }));
 }
 
-module.exports = { post, get, getById, getByUserId, getByClientId, update, updateStatus, remove, getBasicReport, getBasicReportTomorow };
+module.exports = { post, get, getById, getByUserId, getByClientId, update, updateStatus, remove, getBasicReport, getBasicReportTomorow, getByParameter };

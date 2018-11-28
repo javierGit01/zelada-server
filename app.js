@@ -10,39 +10,34 @@ const itemsRoute = require('./src/models/item/item.route.js');
 const groupsRoute = require('./src/models/group/group.route.js');
 const priceRoute = require('./src/models/group-detail/groupdetail.route.js');
 const orderRoute = require('./src/models/orders/order.route.js');
-// const prodorderRoute = require('./src/models/prodorders/prodorder.route.js');
+const prodorderRoute = require('./src/models/prodorders/prodorder.route.js');
 const dateparamRoute = require('./src/models/dateparam/dateparam.route.js');
 const timeparamRoute = require('./src/models/timeparam/timeparam.route.js');
 const zoneRoute = require('./src/models/zone/zone.route.js');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const utf8 = require('utf8');
 const db = require('./src/config/db');
-// const fileUpload = require('express-fileupload');
-// app.use(fileUpload());
+const fileUpload = require('express-fileupload');
+app.use(fileUpload());
+
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
+
 
 const PORT = process.env.PORT || 3333;
 const router = express.Router();
-var whitelist = ['http://localhost:3000', 'https://zeladabakery.firebaseapp.com'];
-var corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
-    }
-  }
-};
-
 app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: false}));
-app.use(cors(corsOptions));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+app.use(cors());
+
 app.use('/user', usersRoute);
 app.use('/client', clientsRoute);
 app.use('/item', itemsRoute);
 app.use('/group', groupsRoute);
 app.use('/price', priceRoute);
 app.use('/order', orderRoute);
-// app.use('/prodorder', prodorderRoute);
+app.use('/prodorder', prodorderRoute);
 app.use('/dateparam', dateparamRoute);
 app.use('/timeparam', timeparamRoute);
 app.use('/zone', zoneRoute);

@@ -11,6 +11,8 @@ router.get('/images', jwt.validateToken, Items.getItemsImages);
 
 router.put('/update/:id', jwt.validateToken, Items.update);
 
+router.put('/updateall', jwt.validateToken, Items.updateAllFilepath);
+
 router.get('/price', jwt.validateToken, Items.getItemPrices);
 
 router.get('/group/:id', jwt.validateToken, Items.getByGroup);

@@ -2,8 +2,8 @@
 // var dy = moment.tz(new Date(), "America/La_Paz");
 // console.log(d.format(), '<----AAA');
 // console.log(dy.format(), '<----AAA1');
-const TIME_ZONE = 'America/La_Paz';
-// const TIME_ZONE = 'America/New_York';
+//const TIME_ZONE = 'America/La_Paz';
+const TIME_ZONE = 'America/New_York';
 /*Order Status*/
 const ORDER_PENDING = 1;
 const ORDER_APROVED = 2;

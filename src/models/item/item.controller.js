@@ -129,7 +129,7 @@ function getByGroupImages (req, res) {
     __v: 0,
     deleted: 0,
     available: 0,
-    filepath: 0,
+    image: 0,
   }, { sort:{ resgisterdate: -1 } })
     .then(item => {
       /*item = item.map(itemt => {
@@ -179,6 +179,16 @@ function getItemPrices (req, res) {
     .catch(error => { res.status(404).send({ data: error }); });
 }
 
+function updateAllFilepath (req, res){
+  console.log('Invoking items[updateAllFilepath]');
+  let newItem = req.body;
+  return Items.update({}, { filepath: null }, { multi: true })
+    .then(response => {
+      res.send({ data: response });
+    })
+    .catch(error => res.status(404).send({ data: error }))
+}
+
 function update (req, res){
   console.log('Invoking items[update]');
   let newItem = req.body;
@@ -187,7 +197,7 @@ function update (req, res){
       res.send({ data: response });
     })
     .catch(error => res.status(404).send({ data: error }));
-  var imagefile = newItem.image;
+  // var imagefile = newItem.image;
   /*base64Img.img(imagefile, 'public/image/', newItem.code
     ,function(err, filepath) {
       if (err) {
@@ -263,4 +273,4 @@ function getGroupsByItemId (req, res) {
     .catch(error => res.status(404).send({ data: error }));
 }
 
-module.exports = { post, get, getById, getByGroup, getByGroupImages, update, remove, getGroupsByItemId, getItemPrices, removeAll, getItemsImages };
+module.exports = { post, get, getById, getByGroup, getByGroupImages, update, updateAllFilepath, remove, getGroupsByItemId, getItemPrices, removeAll, getItemsImages };

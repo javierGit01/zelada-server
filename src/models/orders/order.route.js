@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.get('/', Orders.get);
 
+router.get('/parameter/:deliverydate/:status', Orders.getByParameter);
+
 router.post('/create', Orders.post);
 
 router.put('/update/:id', Orders.update);
