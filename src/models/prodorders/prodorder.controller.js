@@ -35,17 +35,11 @@ function get (req, res) {
 function getById (req, res) {
   return ProdOrders.findById({ _id: req.params.id })
     .then(userList => {
-      Items.populate(userList, { path: "itemsorder.item", model: 'Item', select: '-image'}).
-      then(listItems => {
-        Clients.populate(listItems, { path: "client", model: 'Client' })
-          .then(listItems => {
-            Groups.populate(listItems, { path: "client.group", model: 'Group' })
-              .then(listItems => {
-                Users.populate(listItems, {path: "user", model: 'User'})
-                  .then(listItems => res.send({data: listItems}))
-              })
-          })
-      })
+      Items.populate(userList, { path: "itemsorder.item", model: 'Item', select: '-image'})
+        .then(listItems => {
+          Users.populate(listItems, {path: "user", model: 'User'})
+            .then(listItems => res.send({data: listItems}))
+        })
     })
     .catch(error => res.status(404).send({ data: error }));
 }
@@ -90,63 +84,15 @@ function getByClientId (req, res) {
 function update (req, res) {
   var newOrder = req.body;
   return ProdOrders.findOneAndUpdate({ _id: req.params.id }, { $set: newOrder }, { new: true })
-    .then(item => {
-      Users.populate(item, {path: "user", model: 'User'})
+    .then(userList => {
+      Items.populate(userList, { path: "itemsorder.item", model: 'Item', select: '-image'})
         .then(listItems => {
-          Clients.populate(listItems, { path: "client" })
-            .then(itemClient => {
-              if (newOrder.status === ORDER_DELIVERED) {
-                var orderStatus = statusListOrder.find(itemStatus => itemStatus.id === ORDER_DELIVERED).text;
-                var customMessage = 'Su Pedido para ' + itemClient.client.fullname + ' fue ' + orderStatus;
-                var message = {
-                  app_id: ONESIGNAL_APP_ID,
-                  contents: {"en": customMessage},
-                  url: URL_STATUS_ORDER_REDIRECT,
-                  filters: [
-                    {"field": "email", "relation": "=", "value": itemClient.user.email}
-                  ]
-                };
-                sendNotification(message);
-              }
-              res.send({data: itemClient});
-            })
-            .catch(error => { throw error; })
+          Users.populate(listItems, {path: "user", model: 'User'})
+            .then(listItems => res.send({data: listItems}))
         })
-        .catch(error => { throw error; })
     })
     .catch(error => res.status(404).send({ data: error }));
 }
-
-var sendNotification = function(data) {
-  var headers = {
-    "Content-Type": "application/json; charset=utf-8",
-    "Authorization": "Basic " + REST_API_KEY
-  };
-
-  var options = {
-    host: "onesignal.com",
-    port: 443,
-    path: "/api/v1/notifications",
-    method: "POST",
-    headers: headers
-  };
-
-  var https = require('https');
-  var req = https.request(options, function(res) {
-    res.on('data', function(data) {
-      console.log("Response:");
-      console.log(JSON.parse(data));
-    });
-  });
-
-  req.on('error', function(e) {
-    console.log("ERROR:");
-    console.log(e);
-  });
-
-  req.write(JSON.stringify(data));
-  req.end();
-};
 
 function updateStatus (req, res) {
   console.log('Actualizando estado de Item');
